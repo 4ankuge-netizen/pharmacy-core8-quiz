@@ -476,8 +476,214 @@ body {
   background: var(--neutral-btn-hover);
 }
 
+/* ===== プロフィール表示バー ===== */
+.profile-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px var(--shadow);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.profile-bar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-bar-actions button {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.profile-bar-actions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ===== プロフィール(ニックネーム)選択画面 ===== */
+.profile-intro {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 20px;
+  line-height: 1.7;
+}
+
+.profile-list-wrap {
+  margin-bottom: 24px;
+}
+
+.profile-list-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+}
+
+.profile-btn:hover {
+  border-color: var(--accent);
+}
+
+.profile-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.profile-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.profile-new {
+  margin-bottom: 16px;
+}
+
+.profile-new-row {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-new-row input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.profile-new-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.profile-new-row button {
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #ffffff;
+  padding: 0 18px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.profile-new-row button:hover {
+  background: var(--accent-hover);
+}
+
+.profile-note,
+.history-note {
+  font-size: 12px;
+  color: var(--text-faint);
+  line-height: 1.7;
+  margin-top: 20px;
+}
+
+/* ===== 解答履歴画面 ===== */
+.history-profile-label {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.history-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.history-actions button,
+.import-label {
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.history-actions button:hover,
+.import-label:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 30px 0;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 3px 12px var(--shadow);
+  padding: 12px 16px;
+  border-left: 6px solid var(--accent);
+}
+
+.history-line1 {
+  margin: 0 0 4px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.history-line2 {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 @media (max-width: 480px) {
   .disease-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }

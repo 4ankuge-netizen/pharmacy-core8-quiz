@@ -19,8 +19,38 @@
       <p class="app-sub">代表的8疾患 × 初級・中級・上級 / 4択問題</p>
     </header>
 
+    <!-- プロフィール表示バー(ニックネーム・履歴・切替) -->
+    <div class="profile-bar" id="profile-bar" hidden>
+      <span id="profile-bar-name"></span>
+      <div class="profile-bar-actions">
+        <button type="button" id="view-history-btn">📊 解答履歴</button>
+        <button type="button" id="switch-profile-btn">🔄 切替</button>
+      </div>
+    </div>
+
+    <!-- 画面0: プロフィール(ニックネーム)選択 -->
+    <section id="screen-profile" class="screen" hidden>
+      <p class="screen-lead">ニックネームを選んでください</p>
+      <p class="profile-intro">メールアドレスやパスワードは不要です。同じ端末を複数人で使う場合でも、ニックネームごとに解答履歴を分けて記録できます。</p>
+
+      <div class="profile-list-wrap" id="profile-list-wrap" hidden>
+        <p class="profile-list-label">これまで使ったニックネーム</p>
+        <div class="profile-list" id="profile-list"></div>
+      </div>
+
+      <div class="profile-new">
+        <p class="profile-list-label">新しいニックネームを使う</p>
+        <div class="profile-new-row">
+          <input type="text" id="profile-name-input" placeholder="例: たろう、K.S. など" maxlength="20">
+          <button type="button" id="profile-create-btn">この名前で始める</button>
+        </div>
+      </div>
+
+      <p class="profile-note">※ ニックネームと解答履歴は、この端末のこのブラウザだけに保存されます。他の端末に引き継ぎたい場合は、解答履歴画面の「エクスポート/インポート」機能をご利用ください。</p>
+    </section>
+
     <!-- 画面1: 疾患選択 -->
-    <section id="screen-disease" class="screen">
+    <section id="screen-disease" class="screen" hidden>
       <p class="screen-lead">疾患を選んでください</p>
       <div class="disease-grid" id="disease-grid"></div>
     </section>
@@ -61,6 +91,26 @@
         <button type="button" id="change-level-btn">レベルを選び直す</button>
         <button type="button" id="change-disease-btn">疾患を選び直す</button>
       </div>
+    </section>
+
+    <!-- 画面5: 解答履歴 -->
+    <section id="screen-history" class="screen" hidden>
+      <button type="button" class="back-btn" id="back-from-history">← 疾患選択に戻る</button>
+      <h2>解答履歴</h2>
+      <p class="history-profile-label" id="history-profile-label"></p>
+
+      <div class="history-actions">
+        <button type="button" id="export-history-btn">📥 エクスポート(JSON保存)</button>
+        <label class="import-label" for="import-history-input">
+          📤 インポート(JSON読込)
+        </label>
+        <input type="file" id="import-history-input" accept="application/json" hidden>
+      </div>
+
+      <p class="history-empty" id="history-empty" hidden>まだ解答履歴がありません。クイズに挑戦すると、ここに記録されます。</p>
+      <div class="history-list" id="history-list"></div>
+
+      <p class="history-note">※ 履歴はこの端末のこのブラウザに、ニックネームごとに分けて保存されます。他の端末とは自動で同期されないため、引き継ぎたい場合は上の「エクスポート」でファイルを保存し、別の端末で「インポート」してください。</p>
     </section>
   </div>
 

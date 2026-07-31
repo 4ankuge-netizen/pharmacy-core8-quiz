@@ -22,10 +22,12 @@ const LEVEL_LABELS = {
 
 // ----- 画面の要素をまとめて取得 -----
 const screens = {
+  profile: document.getElementById("screen-profile"),
   disease: document.getElementById("screen-disease"),
   level: document.getElementById("screen-level"),
   quiz: document.getElementById("screen-quiz"),
   result: document.getElementById("screen-result"),
+  history: document.getElementById("screen-history"),
 };
 
 function showScreen(name) {
@@ -43,6 +45,234 @@ function shuffle(array) {
   }
   return copy;
 }
+
+// ===================================================================
+// プロフィール(ニックネーム)・解答履歴
+//
+// このアプリはサーバーを持たない静的サイトなので、ログインの代わりに
+// 「ニックネーム」だけをキーにして、ブラウザのlocalStorage(この端末・
+// このブラウザだけに残る保存領域)に解答履歴を分けて記録します。
+// 同じ端末を複数人で使う場合でも、ニックネームを選び直せば履歴が混ざりません。
+// ただし別の端末には自動で引き継がれないため、エクスポート/インポート機能で
+// JSONファイルとして持ち運べるようにしています。
+// ===================================================================
+const STORAGE_KEY = "quiz_app_data_v1";
+
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { currentProfile: null, profiles: {} };
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return { currentProfile: null, profiles: {} };
+    if (!parsed.profiles || typeof parsed.profiles !== "object") parsed.profiles = {};
+    return parsed;
+  } catch (e) {
+    return { currentProfile: null, profiles: {} };
+  }
+}
+
+function saveStore() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  } catch (e) {
+    // 保存領域の上限などで失敗しても、アプリ自体は動き続けられるようにする
+    console.warn("解答履歴の保存に失敗しました", e);
+  }
+}
+
+const store = loadStore();
+
+function ensureProfile(name) {
+  if (!store.profiles[name]) {
+    store.profiles[name] = { createdAt: new Date().toISOString(), history: [] };
+  }
+  store.currentProfile = name;
+  saveStore();
+}
+
+function getCurrentHistory() {
+  if (!store.currentProfile || !store.profiles[store.currentProfile]) return [];
+  return store.profiles[store.currentProfile].history;
+}
+
+function addHistoryRecord(record) {
+  if (!store.currentProfile) return;
+  ensureProfile(store.currentProfile);
+  store.profiles[store.currentProfile].history.unshift(record);
+  saveStore();
+}
+
+function makeRecordId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+// ----- プロフィール表示バー(現在のニックネーム・履歴/切替ボタン) -----
+function updateProfileBadge() {
+  const bar = document.getElementById("profile-bar");
+  const nameEl = document.getElementById("profile-bar-name");
+  if (store.currentProfile) {
+    bar.hidden = false;
+    nameEl.textContent = `👤 ${store.currentProfile}`;
+  } else {
+    bar.hidden = true;
+  }
+}
+
+// ===== 画面0: プロフィール(ニックネーム)選択 =====
+function renderProfileScreen() {
+  const wrap = document.getElementById("profile-list-wrap");
+  const list = document.getElementById("profile-list");
+  list.innerHTML = "";
+
+  const names = Object.keys(store.profiles);
+  wrap.hidden = names.length === 0;
+
+  names.forEach((name) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "profile-btn";
+
+    const nameEl = document.createElement("span");
+    nameEl.className = "profile-name";
+    nameEl.textContent = name; // textContentなのでHTMLとして解釈されず安全
+
+    const metaEl = document.createElement("span");
+    metaEl.className = "profile-meta";
+    const count = store.profiles[name].history.length;
+    metaEl.textContent = `解答履歴 ${count}件`;
+
+    btn.appendChild(nameEl);
+    btn.appendChild(metaEl);
+    btn.addEventListener("click", () => selectProfile(name));
+    list.appendChild(btn);
+  });
+}
+
+function selectProfile(name) {
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  ensureProfile(trimmed);
+  updateProfileBadge();
+  showScreen("disease");
+}
+
+document.getElementById("profile-create-btn").addEventListener("click", () => {
+  const input = document.getElementById("profile-name-input");
+  if (!input.value.trim()) {
+    input.focus();
+    return;
+  }
+  selectProfile(input.value);
+  input.value = "";
+});
+
+document.getElementById("profile-name-input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    document.getElementById("profile-create-btn").click();
+  }
+});
+
+document.getElementById("switch-profile-btn").addEventListener("click", () => {
+  renderProfileScreen();
+  showScreen("profile");
+});
+
+// ===== 画面5: 解答履歴 =====
+function renderHistoryScreen() {
+  document.getElementById("history-profile-label").textContent = store.currentProfile
+    ? `プロフィール: ${store.currentProfile}`
+    : "プロフィールが未設定です";
+
+  const history = getCurrentHistory();
+  document.getElementById("history-empty").hidden = history.length !== 0;
+
+  const list = document.getElementById("history-list");
+  list.innerHTML = "";
+  history.forEach((rec) => {
+    const item = document.createElement("div");
+    item.className = "history-item";
+
+    const line1 = document.createElement("p");
+    line1.className = "history-line1";
+    line1.textContent = `${rec.diseaseIcon} ${rec.diseaseName}(${rec.levelLabel})`;
+
+    const line2 = document.createElement("p");
+    line2.className = "history-line2";
+    const d = new Date(rec.ts);
+    const dateStr = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    line2.textContent = `${rec.score} / ${rec.total} 問正解 ・ ${dateStr}`;
+
+    item.appendChild(line1);
+    item.appendChild(line2);
+    list.appendChild(item);
+  });
+}
+
+document.getElementById("view-history-btn").addEventListener("click", () => {
+  renderHistoryScreen();
+  showScreen("history");
+});
+
+document.getElementById("back-from-history").addEventListener("click", () => showScreen("disease"));
+
+// ----- エクスポート(現在のプロフィールの履歴をJSONファイルとして保存) -----
+document.getElementById("export-history-btn").addEventListener("click", () => {
+  if (!store.currentProfile) return;
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    profile: store.currentProfile,
+    history: getCurrentHistory(),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `quiz-history-${store.currentProfile}-${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+// ----- インポート(別の端末で書き出したJSONファイルを読み込んで合流) -----
+document.getElementById("import-history-input").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const payload = JSON.parse(reader.result);
+      if (!payload || !Array.isArray(payload.history)) throw new Error("invalid format");
+
+      const targetName = typeof payload.profile === "string" && payload.profile.trim()
+        ? payload.profile.trim()
+        : "インポート";
+      ensureProfile(targetName);
+
+      const existingIds = new Set(store.profiles[targetName].history.map((h) => h.id));
+      let added = 0;
+      payload.history.forEach((rec) => {
+        if (rec && rec.id && !existingIds.has(rec.id)) {
+          store.profiles[targetName].history.push(rec);
+          existingIds.add(rec.id);
+          added += 1;
+        }
+      });
+      store.profiles[targetName].history.sort((a, b) => b.ts - a.ts);
+      store.currentProfile = targetName;
+      saveStore();
+
+      updateProfileBadge();
+      renderHistoryScreen();
+      alert(`「${targetName}」の履歴に${added}件を追加しました(重複分は除いています)。`);
+    } catch (err) {
+      alert("読み込みに失敗しました。このアプリの「エクスポート」で保存したJSONファイルを選択してください。");
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+});
 
 // ===== 画面1: 疾患選択 =====
 function renderDiseaseGrid() {
@@ -215,6 +445,19 @@ function showResult() {
     list.appendChild(item);
   });
 
+  addHistoryRecord({
+    id: makeRecordId(),
+    ts: Date.now(),
+    diseaseId: state.diseaseId,
+    diseaseName: disease.name,
+    diseaseIcon: disease.icon,
+    level: state.level,
+    levelLabel: levelLabel,
+    score: state.score,
+    total: total,
+  });
+  updateProfileBadge();
+
   showScreen("result");
 }
 
@@ -232,4 +475,10 @@ document.getElementById("change-disease-btn").addEventListener("click", () => {
 
 // ----- 起動時の初期表示 -----
 renderDiseaseGrid();
-showScreen("disease");
+updateProfileBadge();
+if (store.currentProfile) {
+  showScreen("disease");
+} else {
+  renderProfileScreen();
+  showScreen("profile");
+}
