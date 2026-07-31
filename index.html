@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コアカリ8疾患クイズ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- サンプル問題であることを常に目立たせておく注意バナー -->
+  <div class="warning-banner">
+    ⚠️ この問題は学習用に作成したサンプルです。内容は一般的な医薬品情報・ガイドラインをもとにしていますが、必ず最新の添付文書・インタビューフォーム・ガイドライン原本で正誤をご確認ください。
+  </div>
+
+  <div class="app" id="app">
+    <header class="app-header">
+      <h1>コアカリ8疾患クイズ</h1>
+      <p class="app-sub">代表的8疾患 × 初級・中級・上級 / 4択問題</p>
+    </header>
+
+    <!-- 画面1: 疾患選択 -->
+    <section id="screen-disease" class="screen">
+      <p class="screen-lead">疾患を選んでください</p>
+      <div class="disease-grid" id="disease-grid"></div>
+    </section>
+
+    <!-- 画面2: レベル選択 -->
+    <section id="screen-level" class="screen" hidden>
+      <button type="button" class="back-btn" id="back-to-disease">← 疾患選択に戻る</button>
+      <h2 id="level-disease-name"></h2>
+      <div class="level-grid" id="level-grid"></div>
+    </section>
+
+    <!-- 画面3: クイズ本体 -->
+    <section id="screen-quiz" class="screen" hidden>
+      <div class="quiz-topbar">
+        <span id="quiz-progress"></span>
+        <span id="quiz-score"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+      <p class="question-text" id="question-text"></p>
+      <div class="choices" id="choices"></div>
+
+      <div class="feedback" id="feedback" hidden>
+        <p class="feedback-result" id="feedback-result"></p>
+        <p class="feedback-explanation" id="feedback-explanation"></p>
+        <p class="feedback-source" id="feedback-source"></p>
+        <button type="button" class="next-btn" id="next-btn">次の問題へ →</button>
+      </div>
+    </section>
+
+    <!-- 画面4: 結果・振り返り -->
+    <section id="screen-result" class="screen" hidden>
+      <h2 id="result-heading"></h2>
+      <p class="result-score" id="result-score"></p>
+      <div class="review-list" id="review-list"></div>
+      <div class="result-actions">
+        <button type="button" id="retry-btn">同じレベルをもう一度</button>
+        <button type="button" id="change-level-btn">レベルを選び直す</button>
+        <button type="button" id="change-disease-btn">疾患を選び直す</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
