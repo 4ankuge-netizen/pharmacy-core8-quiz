@@ -36,6 +36,19 @@ function showScreen(name) {
   });
 }
 
+// クイズを解いている最中かどうかを判定する。
+// (「解答履歴」「切替」ボタンを押した時に、答えている途中の問題を
+//  黙って消してしまわないよう、確認をはさむために使う)
+function isQuizInProgress() {
+  return !screens.quiz.hidden;
+}
+
+// 画面を移動してよいか確認する。クイズの途中でなければ何もせずtrueを返す。
+function confirmLeaveQuizIfNeeded() {
+  if (!isQuizInProgress()) return true;
+  return window.confirm("今解いている問題を中断します。よろしいですか?(ここまでの正解数は記録されません)");
+}
+
 // ----- 進行状況を「錠剤シート(PTPシート)」の丸10個で表示する -----
 // クイズが始まるタイミングで、問題数と同じ数だけ丸(blister-cell)を作る。
 function renderBlisterStrip(total) {
@@ -202,6 +215,7 @@ document.getElementById("profile-name-input").addEventListener("keydown", (e) =>
 });
 
 document.getElementById("switch-profile-btn").addEventListener("click", () => {
+  if (!confirmLeaveQuizIfNeeded()) return; // クイズ中なら、確認してキャンセルされたら何もしない
   renderProfileScreen();
   showScreen("profile");
 });
@@ -238,6 +252,7 @@ function renderHistoryScreen() {
 }
 
 document.getElementById("view-history-btn").addEventListener("click", () => {
+  if (!confirmLeaveQuizIfNeeded()) return; // クイズ中なら、確認してキャンセルされたら何もしない
   renderHistoryScreen();
   showScreen("history");
 });
@@ -346,14 +361,15 @@ function openLevelScreen(diseaseId) {
 document.getElementById("back-to-disease").addEventListener("click", () => showScreen("disease"));
 
 // ===== 画面3: クイズ本体 =====
-function startQuiz(diseaseId, levelId) {
-  state.diseaseId = diseaseId;
-  state.level = levelId;
+
+// 「問題プール(pool)」から最大QUESTIONS_PER_QUIZ問を選び、出題順・選択肢の順番を
+// シャッフルしてクイズを開始する共通処理。
+// 通常の出題(startQuiz)と、間違えた問題だけの再挑戦(retryWrongOnly)の両方から呼ばれる。
+function beginQuizFromPool(pool) {
   state.currentIndex = 0;
   state.score = 0;
   state.userAnswers = [];
 
-  const pool = QUIZ_DATA[diseaseId].levels[levelId] || [];
   const picked = shuffle(pool).slice(0, Math.min(QUESTIONS_PER_QUIZ, pool.length));
 
   // 出題順だけでなく、選択肢の並び順もシャッフルしておく
@@ -373,6 +389,33 @@ function startQuiz(diseaseId, levelId) {
 
   showScreen("quiz");
   renderQuestion();
+}
+
+function startQuiz(diseaseId, levelId) {
+  state.diseaseId = diseaseId;
+  state.level = levelId;
+  const pool = QUIZ_DATA[diseaseId].levels[levelId] || [];
+  beginQuizFromPool(pool);
+}
+
+// 直前のクイズで間違えた問題だけを集めて、もう一度出題する。
+// (state.diseaseId / state.level は前回のまま使うので、疾患・レベルの選び直しは不要)
+function retryWrongOnly() {
+  // userAnswers は {q, choices, answerIndex, exp, src, isCorrect, ...} の形。
+  // これは元の問題データ(q, choices, a, exp, src)とほぼ同じ形なので、
+  // 「answerIndex」を「a」と読み替えれば、そのままbeginQuizFromPoolの入力に使える。
+  const wrongPool = state.userAnswers
+    .filter((answer) => !answer.isCorrect)
+    .map((answer) => ({
+      q: answer.q,
+      choices: answer.choices,
+      a: answer.answerIndex,
+      exp: answer.exp,
+      src: answer.src,
+    }));
+
+  if (wrongPool.length === 0) return; // 間違えた問題がなければ何もしない
+  beginQuizFromPool(wrongPool);
 }
 
 function renderQuestion() {
@@ -492,8 +535,16 @@ function showResult() {
   });
   updateProfileBadge();
 
+  // 全問正解ならそもそも「間違えた問題」がないので、ボタンごと隠す
+  const wrongCount = state.userAnswers.filter((a) => !a.isCorrect).length;
+  document.getElementById("retry-wrong-btn").hidden = wrongCount === 0;
+
   showScreen("result");
 }
+
+document.getElementById("retry-wrong-btn").addEventListener("click", () => {
+  retryWrongOnly();
+});
 
 document.getElementById("retry-btn").addEventListener("click", () => {
   startQuiz(state.diseaseId, state.level);

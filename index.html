@@ -84,6 +84,8 @@
       <p class="result-score" id="result-score"></p>
       <div class="review-list" id="review-list"></div>
       <div class="result-actions">
+        <!-- 間違えた問題が1問もなければ script.js 側で hidden にする -->
+        <button type="button" id="retry-wrong-btn" hidden>✕ 間違えた問題だけもう一度</button>
         <button type="button" id="retry-btn">同じレベルをもう一度</button>
         <button type="button" id="change-level-btn">レベルを選び直す</button>
         <button type="button" id="change-disease-btn">疾患を選び直す</button>

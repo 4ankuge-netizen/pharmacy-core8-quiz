@@ -633,7 +633,18 @@ body {
   background: var(--accent-hover);
 }
 
-.result-actions button:not(#retry-btn):hover {
+/* 「間違えた問題だけもう一度」は、苦手つぶしに直結する一番おすすめの選択肢なので
+   間違い=赤の色で目立たせている(選択肢が赤くなる不正解表示と同じ発想) */
+.result-actions #retry-wrong-btn {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.result-actions #retry-wrong-btn:hover {
+  background: var(--danger-text);
+}
+
+.result-actions button:not(#retry-btn):not(#retry-wrong-btn):hover {
   background: var(--neutral-btn-hover);
 }
 
