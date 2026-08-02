@@ -6,118 +6,180 @@
   display: none !important;
 }
 
+/* =========================================================================
+   色・見た目の「基本設定」(CSS変数)
+   ------------------------------------------------------------------------
+   このアプリは「薬学実習の自己学習ツール」なので、色のテーマも
+   ・紙(添付文書やインタビューフォームの紙)の質感 → --bg / --card-bg
+   ・処方箋や病院サインでよく使われる青 → --accent(ラベルは "rx-blue" のつもり)
+   ・薬局の目印になる緑・添付文書の警告枠の琥珀色・「禁忌」の赤
+     → --success / --warn-border / --danger
+   という「薬学の世界に実際にある色」から選んでいます。
+   ライトモード・ダークモード・(将来のテーマ切替用の)data-theme指定、
+   の3か所に同じ変数セットを用意しています。
+   ========================================================================= */
 :root {
-  --bg: #f4f5f7;
+  --bg: #f6f3ec;
   --card-bg: #ffffff;
-  --text: #222222;
-  --text-muted: #888888;
-  --text-faint: #aaaaaa;
-  --border: #e0e0e8;
-  --border-soft: #eeeeee;
-  --accent: #6c5ce7;
-  --accent-hover: #5b4bd6;
-  --accent-soft: rgba(108, 92, 231, 0.22);
-  --shadow: rgba(30, 20, 60, 0.08);
-  --success: #2ecc71;
-  --success-bg: #e9fbf0;
-  --success-text: #12874f;
-  --danger: #e74c3c;
-  --danger-bg: #fdecea;
-  --danger-text: #c0392b;
-  --warn-border: #f0a020;
-  --warning-bg: #fff3cd;
-  --warning-text: #7a5b00;
-  --warning-border: #f0d878;
-  --neutral-btn-bg: #eeeeee;
-  --neutral-btn-hover: #dddddd;
-  --neutral-btn-text: #444444;
-  --track-bg: #e6e6ee;
+  --text: #1f232d;
+  --text-muted: #6b7280;
+  --text-faint: #9aa0ac;
+  --border: #ddd9cc;
+  --border-soft: #eae7dc;
+  --accent: #2456a6;
+  --accent-hover: #1c4483;
+  --accent-soft: rgba(36, 86, 166, 0.14);
+  --shadow: rgba(32, 37, 49, 0.08);
+  --success: #2f8f5b;
+  --success-bg: #e7f4ec;
+  --success-text: #1f6b41;
+  --danger: #b23a2e;
+  --danger-bg: #fbeae7;
+  --danger-text: #8e2c22;
+  --warn-border: #b8791a;
+  --warning-bg: #fcf1dd;
+  --warning-text: #7a5310;
+  --warning-border: #e4c078;
+  --neutral-btn-bg: #efece3;
+  --neutral-btn-hover: #e3dfd3;
+  --neutral-btn-text: #3a3f4b;
+  --track-bg: #e4e1d6;
+  /* 錠剤シート(PTPシート)の「まだ押し出していない場所」の銀色っぽい枠 */
+  --foil: #b7bec7;
+
+  /* 疾患カードの色分け(病院のフロア案内板が診療科ごとに色分けされているのをイメージ) */
+  --dept-1: #8b4a6b; /* がん */
+  --dept-2: var(--accent); /* 高血圧症(循環器) */
+  --dept-3: #a67a1e; /* 糖尿病(代謝) */
+  --dept-4: var(--danger); /* 心疾患(心臓=赤) */
+  --dept-5: #6b4fa0; /* 脳血管障害(脳神経) */
+  --dept-6: #2e7d7b; /* 精神神経疾患 */
+  --dept-7: #6b7f3a; /* 免疫・アレルギー疾患 */
+  --dept-8: #3e7c8c; /* 感染症 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #17151f;
-    --card-bg: #241f33;
-    --text: #efe9f7;
-    --text-muted: #a89dc0;
-    --text-faint: #8a7fa3;
-    --border: #3c3352;
-    --border-soft: #34293f;
-    --accent: #9d8bf5;
-    --accent-hover: #b3a3f8;
-    --accent-soft: rgba(157, 139, 245, 0.28);
-    --shadow: rgba(0, 0, 0, 0.35);
-    --success: #4fd484;
-    --success-bg: #1c3a2a;
-    --success-text: #7be3a4;
-    --danger: #ef6a5b;
-    --danger-bg: #3f2225;
-    --danger-text: #ff9a8c;
-    --warn-border: #e0a83f;
-    --warning-bg: #3a3016;
-    --warning-text: #f0d27a;
-    --warning-border: #5c4a1e;
-    --neutral-btn-bg: #322a45;
-    --neutral-btn-hover: #3d3452;
-    --neutral-btn-text: #efe9f7;
-    --track-bg: #2c2440;
+    --bg: #14171c;
+    --card-bg: #1e222a;
+    --text: #e9eaee;
+    --text-muted: #9aa1ae;
+    --text-faint: #767d8a;
+    --border: #333944;
+    --border-soft: #262b33;
+    --accent: #6fa1e8;
+    --accent-hover: #8ab4ee;
+    --accent-soft: rgba(111, 161, 232, 0.22);
+    --shadow: rgba(0, 0, 0, 0.4);
+    --success: #4caf7d;
+    --success-bg: #17301f;
+    --success-text: #86d6a8;
+    --danger: #e2695b;
+    --danger-bg: #3a2019;
+    --danger-text: #f0998c;
+    --warn-border: #d9a44b;
+    --warning-bg: #2f2412;
+    --warning-text: #efc978;
+    --warning-border: #4e3a1a;
+    --neutral-btn-bg: #262b33;
+    --neutral-btn-hover: #2e343d;
+    --neutral-btn-text: #e9eaee;
+    --track-bg: #262b33;
+    --foil: #454c58;
+
+    --dept-1: #c98cae;
+    --dept-2: var(--accent);
+    --dept-3: #e0b558;
+    --dept-4: var(--danger);
+    --dept-5: #a995d6;
+    --dept-6: #6fc2be;
+    --dept-7: #a8c27a;
+    --dept-8: #7ec0d1;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #17151f;
-  --card-bg: #241f33;
-  --text: #efe9f7;
-  --text-muted: #a89dc0;
-  --text-faint: #8a7fa3;
-  --border: #3c3352;
-  --border-soft: #34293f;
-  --accent: #9d8bf5;
-  --accent-hover: #b3a3f8;
-  --accent-soft: rgba(157, 139, 245, 0.28);
-  --shadow: rgba(0, 0, 0, 0.35);
-  --success: #4fd484;
-  --success-bg: #1c3a2a;
-  --success-text: #7be3a4;
-  --danger: #ef6a5b;
-  --danger-bg: #3f2225;
-  --danger-text: #ff9a8c;
-  --warn-border: #e0a83f;
-  --warning-bg: #3a3016;
-  --warning-text: #f0d27a;
-  --warning-border: #5c4a1e;
-  --neutral-btn-bg: #322a45;
-  --neutral-btn-hover: #3d3452;
-  --neutral-btn-text: #efe9f7;
-  --track-bg: #2c2440;
+  --bg: #14171c;
+  --card-bg: #1e222a;
+  --text: #e9eaee;
+  --text-muted: #9aa1ae;
+  --text-faint: #767d8a;
+  --border: #333944;
+  --border-soft: #262b33;
+  --accent: #6fa1e8;
+  --accent-hover: #8ab4ee;
+  --accent-soft: rgba(111, 161, 232, 0.22);
+  --shadow: rgba(0, 0, 0, 0.4);
+  --success: #4caf7d;
+  --success-bg: #17301f;
+  --success-text: #86d6a8;
+  --danger: #e2695b;
+  --danger-bg: #3a2019;
+  --danger-text: #f0998c;
+  --warn-border: #d9a44b;
+  --warning-bg: #2f2412;
+  --warning-text: #efc978;
+  --warning-border: #4e3a1a;
+  --neutral-btn-bg: #262b33;
+  --neutral-btn-hover: #2e343d;
+  --neutral-btn-text: #e9eaee;
+  --track-bg: #262b33;
+  --foil: #454c58;
+
+  --dept-1: #c98cae;
+  --dept-2: var(--accent);
+  --dept-3: #e0b558;
+  --dept-4: var(--danger);
+  --dept-5: #a995d6;
+  --dept-6: #6fc2be;
+  --dept-7: #a8c27a;
+  --dept-8: #7ec0d1;
 }
 
 :root[data-theme="light"] {
-  --bg: #f4f5f7;
+  --bg: #f6f3ec;
   --card-bg: #ffffff;
-  --text: #222222;
-  --text-muted: #888888;
-  --text-faint: #aaaaaa;
-  --border: #e0e0e8;
-  --border-soft: #eeeeee;
-  --accent: #6c5ce7;
-  --accent-hover: #5b4bd6;
-  --accent-soft: rgba(108, 92, 231, 0.22);
-  --shadow: rgba(30, 20, 60, 0.08);
-  --success: #2ecc71;
-  --success-bg: #e9fbf0;
-  --success-text: #12874f;
-  --danger: #e74c3c;
-  --danger-bg: #fdecea;
-  --danger-text: #c0392b;
-  --warn-border: #f0a020;
-  --warning-bg: #fff3cd;
-  --warning-text: #7a5b00;
-  --warning-border: #f0d878;
-  --neutral-btn-bg: #eeeeee;
-  --neutral-btn-hover: #dddddd;
-  --neutral-btn-text: #444444;
-  --track-bg: #e6e6ee;
+  --text: #1f232d;
+  --text-muted: #6b7280;
+  --text-faint: #9aa0ac;
+  --border: #ddd9cc;
+  --border-soft: #eae7dc;
+  --accent: #2456a6;
+  --accent-hover: #1c4483;
+  --accent-soft: rgba(36, 86, 166, 0.14);
+  --shadow: rgba(32, 37, 49, 0.08);
+  --success: #2f8f5b;
+  --success-bg: #e7f4ec;
+  --success-text: #1f6b41;
+  --danger: #b23a2e;
+  --danger-bg: #fbeae7;
+  --danger-text: #8e2c22;
+  --warn-border: #b8791a;
+  --warning-bg: #fcf1dd;
+  --warning-text: #7a5310;
+  --warning-border: #e4c078;
+  --neutral-btn-bg: #efece3;
+  --neutral-btn-hover: #e3dfd3;
+  --neutral-btn-text: #3a3f4b;
+  --track-bg: #e4e1d6;
+  --foil: #b7bec7;
+
+  --dept-1: #8b4a6b;
+  --dept-2: var(--accent);
+  --dept-3: #a67a1e;
+  --dept-4: var(--danger);
+  --dept-5: #6b4fa0;
+  --dept-6: #2e7d7b;
+  --dept-7: #6b7f3a;
+  --dept-8: #3e7c8c;
+}
+
+/* 数字だけ「検査結果の印字」っぽく等幅フォントで見せるための共通クラス。
+   問題番号・スコア・出題数など、データっぽい数字にだけ使います。 */
+.mono-num {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 body {
@@ -126,17 +188,6 @@ body {
   background: var(--bg);
   font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
   color: var(--text);
-}
-
-/* サンプル問題 注意バナー */
-.warning-banner {
-  background: var(--warning-bg);
-  color: var(--warning-text);
-  border-bottom: 1px solid var(--warning-border);
-  text-align: center;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 8px 12px;
 }
 
 .app {
@@ -153,6 +204,7 @@ body {
 .app-header h1 {
   margin: 0 0 6px;
   font-size: 24px;
+  letter-spacing: 0.01em;
 }
 
 .app-sub {
@@ -167,29 +219,49 @@ body {
   margin-bottom: 16px;
 }
 
-/* ===== 疾患選択 ===== */
+/* ===== 疾患選択 =====
+   病院の「診療科フロア案内板」のイメージで、カードの左端に
+   診療科ごとの色タブをつけています(色は :root の --dept-1〜8)。
+   影を強くつけて浮かせるのではなく、線と色タブで整理する見た目にしています。 */
 .disease-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 12px;
 }
 
 .disease-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: var(--card-bg);
-  border: none;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px var(--shadow);
-  padding: 20px 14px;
-  text-align: center;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--foil); /* 色は下のnth-childで診療科ごとに上書き */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+  padding: 16px 14px;
+  text-align: left;
   cursor: pointer;
   font-size: 15px;
+  font-weight: 600;
   color: var(--text);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-left-color 0.15s ease;
 }
 
 .disease-card:hover {
-  box-shadow: 0 6px 20px var(--accent-soft);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 14px var(--accent-soft);
+  transform: translateY(-1px);
 }
+
+/* 8枚のカードに、①〜⑧の診療科カラーを順番に割り当てる。
+   data.js に登場する疾患の並び順(がん→高血圧症→…→感染症)と合わせている。 */
+.disease-grid .disease-card:nth-child(1) { border-left-color: var(--dept-1); }
+.disease-grid .disease-card:nth-child(2) { border-left-color: var(--dept-2); }
+.disease-grid .disease-card:nth-child(3) { border-left-color: var(--dept-3); }
+.disease-grid .disease-card:nth-child(4) { border-left-color: var(--dept-4); }
+.disease-grid .disease-card:nth-child(5) { border-left-color: var(--dept-5); }
+.disease-grid .disease-card:nth-child(6) { border-left-color: var(--dept-6); }
+.disease-grid .disease-card:nth-child(7) { border-left-color: var(--dept-7); }
+.disease-grid .disease-card:nth-child(8) { border-left-color: var(--dept-8); }
 
 .disease-card:focus-visible,
 .choice-btn:focus-visible,
@@ -203,8 +275,8 @@ body {
 
 .disease-card .disease-icon {
   display: block;
-  font-size: 30px;
-  margin-bottom: 8px;
+  font-size: 24px;
+  line-height: 1;
 }
 
 /* ===== レベル選択 ===== */
@@ -235,10 +307,10 @@ body {
 
 .level-card {
   background: var(--card-bg);
-  border: none;
+  border: 1px solid var(--border);
   border-left: 6px solid var(--accent);
-  border-radius: 10px;
-  box-shadow: 0 4px 16px var(--shadow);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px var(--shadow);
   padding: 16px 18px;
   text-align: left;
   cursor: pointer;
@@ -246,9 +318,11 @@ body {
 }
 
 .level-card:hover {
-  box-shadow: 0 6px 20px var(--accent-soft);
+  box-shadow: 0 4px 14px var(--accent-soft);
 }
 
+/* 難易度の色分けは、添付文書の「注意度」表示と同じ発想
+   (安全=緑、注意=琥珀、要警戒=赤)で信号の色に揃えています。 */
 .level-card.level-beginner { border-left-color: var(--success); }
 .level-card.level-intermediate { border-left-color: var(--warn-border); }
 .level-card.level-advanced { border-left-color: var(--danger); }
@@ -266,35 +340,84 @@ body {
   color: var(--text-muted);
 }
 
-/* ===== クイズ画面 ===== */
+/* 問題プールの数字部分だけ等幅フォントで強調(検査値っぽく) */
+.level-card .level-desc .mono-num {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ===== クイズ画面 =====
+   進行状況は「PTPシート(薬を1錠ずつ包んでいる、あのプチプチのシート)」を
+   イメージした丸いマス目10個で表示します。
+   ・まだ答えていない … 銀色の枠だけ(シートに残っている錠剤のイメージ)
+   ・今答えている問題 … 青いリング
+   ・正解した          … 緑で塗りつぶし
+   ・間違えた          … 赤で塗りつぶし */
 .quiz-topbar {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   font-size: 13px;
   color: var(--text-muted);
-  margin-bottom: 6px;
-  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
 }
 
-.progress-bar {
-  background: var(--track-bg);
-  border-radius: 999px;
-  height: 8px;
-  overflow: hidden;
+.quiz-topbar .mono-num {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.blister-strip {
+  display: flex;
+  gap: 6px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.progress-fill {
-  background: var(--accent);
-  height: 100%;
-  width: 0%;
-  transition: width 0.2s ease;
+.blister-cell {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--foil);
+  background: var(--card-bg);
+  flex: 0 0 auto;
+}
+
+.blister-cell.is-current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.blister-cell.is-correct {
+  border-color: var(--success);
+  background: var(--success);
+  animation: blister-pop 0.25s ease;
+}
+
+.blister-cell.is-wrong {
+  border-color: var(--danger);
+  background: var(--danger);
+  animation: blister-pop 0.25s ease;
+}
+
+@keyframes blister-pop {
+  from { transform: scale(0.6); opacity: 0.4; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 「動きを減らす」設定をしている人には、ポップする演出をオフにする */
+@media (prefers-reduced-motion: reduce) {
+  .blister-cell.is-correct,
+  .blister-cell.is-wrong {
+    animation: none;
+  }
 }
 
 .question-text {
   background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px var(--shadow);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px var(--shadow);
   padding: 20px;
   font-size: 17px;
   line-height: 1.7;
@@ -308,17 +431,32 @@ body {
   flex-direction: column;
   gap: 10px;
   margin-bottom: 16px;
+  /* choice-btn の ::before に A, B, C, D と自動でふるためのカウンター */
+  counter-reset: choice-letter;
 }
 
 .choice-btn {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
   background: var(--card-bg);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 13px 16px;
   text-align: left;
   font-size: 15px;
   cursor: pointer;
   color: var(--text);
+  counter-increment: choice-letter;
+}
+
+/* 選択肢の頭に A. B. C. D. をつける(試験の解答用紙のイメージ) */
+.choice-btn::before {
+  content: counter(choice-letter, upper-alpha) ".";
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-weight: 700;
+  color: var(--text-faint);
+  flex: 0 0 auto;
 }
 
 .choice-btn:hover:not(:disabled) {
@@ -335,16 +473,25 @@ body {
   color: var(--success-text);
 }
 
+.choice-btn.correct::before {
+  color: var(--success-text);
+}
+
 .choice-btn.wrong {
   border-color: var(--danger);
   background: var(--danger-bg);
   color: var(--danger-text);
 }
 
+.choice-btn.wrong::before {
+  color: var(--danger-text);
+}
+
 .feedback {
   background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px var(--shadow);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px var(--shadow);
   padding: 18px 20px;
 }
 
@@ -358,15 +505,24 @@ body {
 .feedback-result.is-wrong { color: var(--danger-text); }
 
 .feedback-explanation {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   line-height: 1.7;
   font-size: 15px;
 }
 
+/* 出典(添付文書・ガイドライン名)は、証拠を示すスタンプのようなイメージで
+   小さな枠つきバッジにしています。ここが分かりやすいと「ちゃんとした情報だ」と
+   伝わりやすいので、目立ちすぎない範囲で存在感を持たせています。 */
 .feedback-source {
   margin: 0 0 14px;
-  font-size: 12px;
-  color: var(--text-faint);
+  display: inline-block;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  background: var(--border-soft);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  line-height: 1.5;
 }
 
 .next-btn {
@@ -391,11 +547,10 @@ body {
 
 .result-score {
   text-align: center;
-  font-size: 20px;
+  font-size: 26px;
   font-weight: bold;
   color: var(--accent);
   margin: 0 0 20px;
-  font-variant-numeric: tabular-nums;
 }
 
 .review-list {
@@ -407,8 +562,9 @@ body {
 
 .review-item {
   background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 3px 12px var(--shadow);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
   padding: 14px 16px;
   border-left: 6px solid var(--border);
   color: var(--text);
@@ -442,9 +598,14 @@ body {
 }
 
 .review-source {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
+  display: inline-block;
   font-size: 11px;
-  color: var(--text-faint);
+  color: var(--text-muted);
+  background: var(--border-soft);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 7px;
 }
 
 .result-actions {
@@ -482,8 +643,9 @@ body {
   align-items: center;
   justify-content: space-between;
   background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 2px 10px var(--shadow);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  box-shadow: 0 1px 6px var(--shadow);
   padding: 10px 14px;
   margin-bottom: 16px;
   font-size: 13px;
@@ -540,8 +702,8 @@ body {
   align-items: center;
   justify-content: space-between;
   background: var(--card-bg);
-  border: 2px solid var(--border);
-  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
   padding: 12px 16px;
   cursor: pointer;
   text-align: left;
@@ -574,8 +736,8 @@ body {
 .profile-new-row input {
   flex: 1;
   padding: 12px;
-  border: 2px solid var(--border);
-  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
   font-size: 15px;
   background: var(--card-bg);
   color: var(--text);
@@ -588,7 +750,7 @@ body {
 
 .profile-new-row button {
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--accent);
   color: #ffffff;
   padding: 0 18px;
@@ -657,8 +819,9 @@ body {
 
 .history-item {
   background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 3px 12px var(--shadow);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
   padding: 12px 16px;
   border-left: 6px solid var(--accent);
 }
@@ -673,12 +836,16 @@ body {
   margin: 0;
   font-size: 13px;
   color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 480px) {
   .disease-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .disease-card {
+    padding: 14px 10px;
+    font-size: 14px;
   }
 
   .profile-bar {

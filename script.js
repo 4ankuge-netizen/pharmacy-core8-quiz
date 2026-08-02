@@ -36,6 +36,35 @@ function showScreen(name) {
   });
 }
 
+// ----- 進行状況を「錠剤シート(PTPシート)」の丸10個で表示する -----
+// クイズが始まるタイミングで、問題数と同じ数だけ丸(blister-cell)を作る。
+function renderBlisterStrip(total) {
+  const strip = document.getElementById("blister-strip");
+  strip.innerHTML = "";
+  for (let i = 0; i < total; i++) {
+    const cell = document.createElement("span");
+    cell.className = "blister-cell";
+    strip.appendChild(cell);
+  }
+}
+
+// 「今どの問題を解いているか」を、丸に青いリングをつけて示す
+function markBlisterCurrent(index) {
+  const cells = document.querySelectorAll("#blister-strip .blister-cell");
+  cells.forEach((cell, i) => {
+    cell.classList.toggle("is-current", i === index);
+  });
+}
+
+// 答え終わった問題の丸を、正解なら緑・不正解なら赤に塗りつぶす
+function markBlisterAnswered(index, isCorrect) {
+  const cells = document.querySelectorAll("#blister-strip .blister-cell");
+  const cell = cells[index];
+  if (!cell) return;
+  cell.classList.remove("is-current");
+  cell.classList.add(isCorrect ? "is-correct" : "is-wrong");
+}
+
 // ----- 配列の中身をランダムな順番に並べ替える(トランプを切るイメージ) -----
 function shuffle(array) {
   const copy = array.slice();
@@ -304,7 +333,7 @@ function openLevelScreen(diseaseId) {
     const outOf = Math.min(QUESTIONS_PER_QUIZ, pool.length);
     btn.innerHTML = `
       <span class="level-title">${label.title}</span>
-      <span class="level-desc">${label.desc}(問題プール${pool.length}問中${outOf}問を出題)</span>
+      <span class="level-desc">${label.desc}(問題プール<span class="mono-num">${pool.length}</span>問中<span class="mono-num">${outOf}</span>問を出題)</span>
     `;
     btn.disabled = pool.length === 0;
     btn.addEventListener("click", () => startQuiz(diseaseId, levelId));
@@ -340,6 +369,8 @@ function startQuiz(diseaseId, levelId) {
     };
   });
 
+  renderBlisterStrip(state.questions.length); // 錠剤シートの丸を、問題数ぶん新しく並べ直す
+
   showScreen("quiz");
   renderQuestion();
 }
@@ -349,9 +380,12 @@ function renderQuestion() {
   const total = state.questions.length;
   const current = state.questions[state.currentIndex];
 
-  document.getElementById("quiz-progress").textContent = `問題 ${state.currentIndex + 1} / ${total}`;
-  document.getElementById("quiz-score").textContent = `正解 ${state.score}`;
-  document.getElementById("progress-fill").style.width = `${(state.currentIndex / total) * 100}%`;
+  // 数字の部分だけ mono-num クラスで等幅フォントにする(検査値の印字のような見た目にするため)
+  document.getElementById("quiz-progress").innerHTML =
+    `問題 <span class="mono-num">${state.currentIndex + 1}</span> / <span class="mono-num">${total}</span>`;
+  document.getElementById("quiz-score").innerHTML =
+    `正解 <span class="mono-num">${state.score}</span>`;
+  markBlisterCurrent(state.currentIndex);
 
   document.getElementById("question-text").textContent = current.q;
 
@@ -376,6 +410,7 @@ function selectAnswer(chosenIndex) {
   const current = state.questions[state.currentIndex];
   const isCorrect = chosenIndex === current.answerIndex;
   if (isCorrect) state.score += 1;
+  markBlisterAnswered(state.currentIndex, isCorrect); // シートの丸を正解=緑/不正解=赤に塗る
 
   state.userAnswers.push({
     q: current.q,
@@ -403,7 +438,7 @@ function selectAnswer(chosenIndex) {
   document.getElementById("feedback-source").textContent = `出題材料: ${current.src}`;
   feedback.hidden = false;
 
-  document.getElementById("quiz-score").textContent = `正解 ${state.score}`;
+  document.getElementById("quiz-score").innerHTML = `正解 <span class="mono-num">${state.score}</span>`;
 }
 
 document.getElementById("next-btn").addEventListener("click", () => {
@@ -417,14 +452,13 @@ document.getElementById("next-btn").addEventListener("click", () => {
 
 // ===== 画面4: 結果・振り返り =====
 function showResult() {
-  document.getElementById("progress-fill").style.width = "100%";
-
   const total = state.questions.length;
   const disease = QUIZ_DATA[state.diseaseId];
   const levelLabel = LEVEL_LABELS[state.level].title;
 
   document.getElementById("result-heading").textContent = `${disease.icon} ${disease.name}(${levelLabel})の結果`;
-  document.getElementById("result-score").textContent = `${state.score} / ${total} 問 正解`;
+  document.getElementById("result-score").innerHTML =
+    `<span class="mono-num">${state.score}</span> / <span class="mono-num">${total}</span> 問 正解`;
 
   const list = document.getElementById("review-list");
   list.innerHTML = "";

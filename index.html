@@ -8,11 +8,6 @@
 </head>
 <body>
 
-  <!-- サンプル問題であることを常に目立たせておく注意バナー -->
-  <div class="warning-banner">
-    ⚠️ この問題は学習用に作成したサンプルです。内容は一般的な医薬品情報・ガイドラインをもとにしていますが、必ず最新の添付文書・インタビューフォーム・ガイドライン原本で正誤をご確認ください。
-  </div>
-
   <div class="app" id="app">
     <header class="app-header">
       <h1>コアカリ8疾患クイズ</h1>
@@ -68,7 +63,9 @@
         <span id="quiz-progress"></span>
         <span id="quiz-score"></span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <!-- 進行状況を「錠剤シート(PTPシート)」のイメージで、丸を10個並べて表示する。
+           中身はscript.jsがJavaScriptで作る(renderBlisterStrip関数)。 -->
+      <div class="blister-strip" id="blister-strip"></div>
 
       <p class="question-text" id="question-text"></p>
       <div class="choices" id="choices"></div>
